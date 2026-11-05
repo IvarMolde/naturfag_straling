@@ -1,0 +1,512 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Strålejakten</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: full-width teal band (hills, as on the exam sheets) over a white working surface. Flat, ruled, exam-paper structure. */
+:root{
+  --band:#9FD0D4; --bandink:#10343A; --hill:#CCE7E9;
+  --bg:#FFFFFF; --panel:#F2F8F9; --ink:#1C1C1C; --muted:#5A6B70; --line:#D3E1E3;
+  --teal:#1B7078; --btn:#0F4A52; --btnink:#FFFFFF;
+  --red:#C8102E; --orange:#E4572B; --yellow:#E8A425;
+  --good:#2B7A4B; --goodsoft:#E4F2EA; --bad:#C8102E; --badsoft:#FBE7EA;
+  --font:'Source Sans 3','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --band:#12383D; --bandink:#EAF4F4; --hill:#1D4C52;
+  --bg:#0D1E21; --panel:#132A2E; --ink:#EDF3F3; --muted:#9AB1B5; --line:#25454B;
+  --teal:#6EC1C9; --btn:#6EC1C9; --btnink:#06262A;
+  --red:#FF6377; --orange:#FF8D5E; --yellow:#F2B944;
+  --good:#5FCB8C; --goodsoft:#15392A; --bad:#FF7487; --badsoft:#401C25; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --band:#12383D; --bandink:#EAF4F4; --hill:#1D4C52;
+  --bg:#0D1E21; --panel:#132A2E; --ink:#EDF3F3; --muted:#9AB1B5; --line:#25454B;
+  --teal:#6EC1C9; --btn:#6EC1C9; --btnink:#06262A;
+  --red:#FF6377; --orange:#FF8D5E; --yellow:#F2B944;
+  --good:#5FCB8C; --goodsoft:#15392A; --bad:#FF7487; --badsoft:#401C25; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.in{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.band{background:var(--band);color:var(--bandink)}
+.hero{position:relative;overflow:hidden}
+.hero .in{padding-block:30px 78px}
+.hills{position:absolute;left:0;bottom:-1px;width:100%;height:62px;display:block}
+.mark{display:flex;gap:3px;margin-bottom:14px}
+.mark i{display:block;width:18px;height:5px}
+.mark i:nth-child(1){background:var(--red)}.mark i:nth-child(2){background:var(--orange)}.mark i:nth-child(3){background:var(--yellow)}
+h1{font-size:38px;font-weight:700;line-height:1.08;letter-spacing:-.01em;text-wrap:balance}
+.lead{max-width:34em;margin-top:10px;font-size:18px}
+.slim .in{padding-block:14px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.main{padding-block:26px 64px;display:flex;flex-direction:column;gap:34px}
+.sec{display:flex;flex-direction:column;gap:14px}
+h2{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);padding-bottom:8px;border-bottom:2px solid var(--teal)}
+.sub{color:var(--muted);font-size:15px}
+.num{font-variant-numeric:tabular-nums}
+
+/* fremgang */
+.lvlrow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.lvlname{font-size:26px;font-weight:700;line-height:1.2}
+.lvlno{color:var(--muted);font-size:15px}
+.xpbar{height:8px;margin:8px 0 6px;background:var(--panel);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.xpbar>i{display:block;height:100%;background:var(--teal);transition:width .6s ease}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:4px}
+.stat{padding:12px 14px;border-left:1px solid var(--line);min-width:0}
+.stat:first-child{border-left:0}
+.stat b{display:block;font-size:22px;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+
+/* spill */
+.mode{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:14px 2px}
+.mode:hover:not(:disabled){background:var(--panel)}
+.mode:disabled{opacity:.5;cursor:not-allowed}
+.mode b{display:block;font-size:18px;font-weight:600}
+.mode small{display:block;color:var(--muted);font-size:15px;line-height:1.35}
+.mode .go{color:var(--teal);font-weight:600;font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.mode.primary{background:var(--btn);color:var(--btnink);border-radius:4px;padding:16px;margin-bottom:6px}
+.mode.primary:hover{background:var(--btn);filter:brightness(1.08)}
+.mode.primary small,.mode.primary .go{color:inherit;opacity:.88}
+.list{border-top:1px solid var(--line)}
+
+/* temaer */
+.topic{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;text-align:left;width:100%;background:none;border:0;border-bottom:1px solid var(--line);padding:12px 2px}
+.topic:hover{background:var(--panel)}
+.topic b{font-size:18px;font-weight:600}
+.topic .n{font-size:14px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.topic .d{font-size:14px;color:var(--muted)}
+.stars{display:flex;gap:2px;justify-content:flex-end}
+.stars svg{width:16px;height:16px}
+.star-on{fill:var(--yellow)}.star-off{fill:var(--line)}
+.tbar{grid-column:1 / -1;height:4px;background:var(--panel);border-radius:2px;overflow:hidden;margin-top:6px}
+.tbar>i{display:block;height:100%;background:var(--teal)}
+
+/* merker */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));column-gap:28px}
+.badge{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);min-width:0}
+.medal{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;border:2px solid var(--yellow);color:var(--ink);background:var(--panel)}
+.bt{min-width:0}
+.bt b{display:block;font-size:16px;font-weight:600;line-height:1.25}
+.bt small{display:block;font-size:14px;color:var(--muted);line-height:1.3}
+.badge.locked{opacity:.5}
+.badge.locked .medal{border-color:var(--line);color:var(--muted)}
+.reset{align-self:flex-start;background:none;border:1px solid var(--line);border-radius:4px;padding:8px 12px;font-size:14px;color:var(--muted)}
+
+/* spørsmål */
+.topbar{display:flex;align-items:center;gap:12px}
+.x{flex:none;width:40px;height:40px;border-radius:4px;background:var(--bg);border:1px solid var(--bandink);color:var(--bandink);font-size:17px;line-height:1}
+.prog{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.ptxt{font-size:14px;font-weight:600}
+.prog .bar{height:6px;background:rgba(255,255,255,.55);border-radius:1px;overflow:hidden}
+.prog .bar>i{display:block;height:100%;background:var(--bandink);transition:width .3s}
+.hearts{display:flex;gap:3px}
+.hearts svg{width:20px;height:20px}
+.h-on{fill:var(--red)}.h-off{fill:rgba(0,0,0,.18)}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:14px;font-weight:600;padding:2px 9px;border-radius:3px;background:var(--panel);border:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.chip.hot{border-color:var(--yellow);box-shadow:inset 3px 0 0 var(--yellow)}
+.chip.xp{color:var(--teal)}
+.timer{display:flex;align-items:center;gap:12px}
+.timer .track{flex:1;height:4px;background:var(--panel);border-radius:2px;overflow:hidden}
+.timer .track>i{display:block;height:100%;width:100%;background:var(--orange)}
+.timer .track>i.late{background:var(--muted)}
+.timer span{font-size:13px;color:var(--muted);min-width:110px;text-align:right}
+.card{background:var(--bg);border:1px solid var(--line);border-top:4px solid var(--teal);border-radius:4px;padding:20px;display:flex;flex-direction:column;gap:18px}
+.src{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.qtext{font-size:22px;font-weight:600;line-height:1.35;text-wrap:pretty}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:grid;grid-template-columns:32px minmax(0,1fr);gap:8px;align-items:start;text-align:left;width:100%;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:14px;font-size:18px;line-height:1.4}
+.opt .l{font-weight:700;color:var(--teal)}
+.opt .t{overflow-wrap:anywhere}
+.opt:hover:not(:disabled){border-color:var(--teal);background:var(--panel)}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--good);background:var(--goodsoft)}
+.opt.ok .l{color:var(--good)}
+.opt.no{border-color:var(--bad);background:var(--badsoft)}
+.opt.no .l{color:var(--bad)}
+.fb{border-left:4px solid var(--line);padding:2px 0 2px 14px;display:flex;flex-direction:column;gap:10px}
+.fb.good{border-left-color:var(--good)}.fb.bad{border-left-color:var(--bad)}
+.fb h3{font-size:20px;font-weight:700}
+.fb.good h3{color:var(--good)}.fb.bad h3{color:var(--bad)}
+.fb p{font-size:17px}
+.rows{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:minmax(0,130px) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px}
+.row .rl{color:var(--muted);line-height:1.2}
+.row .rb{height:12px;background:var(--panel);border-radius:2px;overflow:hidden}
+.row .rb>i{display:block;height:100%;background:var(--teal)}
+.row.end .rb>i{background:var(--orange)}
+.row .rv{font-weight:700;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.note{font-size:14px;color:var(--muted)}
+.next{align-self:stretch;margin-top:4px;background:var(--btn);color:var(--btnink);border:0;border-radius:4px;padding:14px;font-size:18px;font-weight:600}
+.next:hover{filter:brightness(1.1)}
+
+/* resultat */
+.res{gap:22px}
+.score{display:flex;align-items:center;gap:18px}
+.ring{width:96px;height:96px;flex:none}
+.ring text{font-weight:700;fill:var(--ink)}
+.wrong{display:flex;flex-direction:column}
+.w{border-bottom:1px solid var(--line);padding:12px 0;display:flex;flex-direction:column;gap:3px}
+.w .q{font-weight:600;font-size:17px}
+.w .a{font-size:16px}.w .a.r{color:var(--bad)}.w .a.g{color:var(--good)}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btns button{flex:1 1 150px;padding:13px;border-radius:4px;font-weight:600;font-size:17px;border:1px solid var(--ink);background:var(--bg)}
+.btns .p{background:var(--btn);border-color:var(--btn);color:var(--btnink)}
+.lvlup{background:var(--panel);border-left:4px solid var(--yellow);padding:12px 14px;font-weight:600}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:20;max-width:calc(100% - 32px);
+  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:4px;font-size:15px;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:460px){h1{font-size:31px}.qtext{font-size:20px}.opt{font-size:17px}.stat b{font-size:18px}.stat{padding:10px}}
+</style>
+
+<div id="app">
+  <section id="home"></section>
+  <section id="play" hidden></section>
+  <section id="result" hidden></section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+
+/* ---------- Spørsmål (kopi av alle 69 oppgavene i PDF-en) ---------- */
+var TOPICS={
+  nordlys:{n:'Nordlys',d:'Hva som skaper lyset på nattehimmelen'},
+  drivhus:{n:'Drivhuseffekten',d:'Hva den er og hva som øker den'},
+  halv:{n:'Halveringstid',d:'Regn aktivitet bakover og framover i tid'},
+  ion:{n:'Ioniserende stråling',d:'Kjennetegn og bruk i medisin'},
+  kjerne:{n:'Alfa, beta og radon',d:'Atomnummer, strålingstyper og bakgrunnsstråling'},
+  uv:{n:'Ozon og UV',d:'Hva ozonlaget stopper og hvorfor UV er farlig'},
+  bolge:{n:'Lys, lyd og bølger',d:'Frekvens, bølgelengde og desibel'},
+  spekter:{n:'Linjespekter',d:'Hva spektre forteller om stjerner'}
+};
+var TOPIC_ORDER=['nordlys','drivhus','halv','ion','kjerne','uv','bolge','spekter'];
+var Q=[];
+function q(src,t,text,opts,a,why,calc){Q.push({id:Q.length+1,src:src,t:t,text:text,opts:opts,a:a,why:why,calc:calc||null})}
+
+var E={
+ nl:'Ladde partikler fra sola (solvinden) fanges av jordas magnetfelt og styres mot polområdene. Der kolliderer de med atomer i atmosfæren, og atomene sender ut lys. Månelys, mørketid, lystgass og radioaktiv forurensning har ingenting med nordlys å gjøre.',
+ dh:'Kortbølget sollys slipper gjennom atmosfæren, men drivhusgasser som CO₂, metan og vanndamp holder tilbake langbølget varmestråling fra jorda. Det gjør jorda varmere.',
+ dhOk:'Økningen skyldes at mennesker har tilført mer CO₂ til atmosfæren, blant annet fra fossilt brensel. Sola, vulkaner, ozonlaget og skydekket er ikke hovedårsaken.',
+ ion:'Ioniserende stråling har nok energi til å slå elektroner løs fra atomer, slik at det dannes ioner. Stråling er energi, ikke et radioaktivt stoff.',
+ rad:'Radon er en radioaktiv gass som dannes når uran i berggrunnen brytes ned. Radon er hovedkilden til bakgrunnsstråling i Norge.',
+ oz:'Ozonlaget absorberer mesteparten av UV-strålingen fra sola. Radiobølger, synlig lys og infrarøde stråler slipper gjennom.',
+ med:'Røntgen og gammastråling er ioniserende og brukes til undersøkelse og kreftbehandling. MR bruker magnetfelt og radiobølger, ultralyd er lydbølger, og DNA-analyse og narkose har ingenting med stråling å gjøre.',
+ db:'Lydstyrke måles i desibel (dB). Når du skrur opp volumet, øker desibelnivået. Lydens hastighet, frekvens (tonehøyde) og bølgelengde endres ikke.',
+ lyd:'Lyd er trykkbølger, altså svingninger i luft eller et annet stoff. Lyd er ikke elektromagnetisk stråling, og den trenger et medium å gå gjennom.',
+ alfa:'En alfapartikkel er en heliumkjerne (2 protoner og 2 nøytroner). Atomkjernen mister 2 protoner, så atomnummeret minker med 2 (Rn 86 → Po 84).',
+ beta:'Ved betastråling blir en nøytron i kjernen til et proton, og et elektron sendes ut. Antall protoner øker med 1, så atomnummeret øker med 1 (C-14 → N-14).',
+ lin:'Hvert grunnstoff gir sitt eget mønster av spektrallinjer, som et fingeravtrykk. Ved å se på spekteret fra en stjerne kan vi finne ut hvilke grunnstoffer den inneholder.',
+ em:'Alle elektromagnetiske bølger går med lysets fart i vakuum, omtrent 300 000 km/s. Frekvens og bølgelengde varierer, men farten er lik.',
+ uvf:'UV-stråling har nok energi til å skade DNA i hudcellene. Skadene kan gi mutasjoner og kreft.',
+ hl:'For hver halveringstid halveres aktiviteten. Går vi bakover i tid, dobles den for hver halveringstid.'
+};
+var CS=' (Cesium har symbolet Cs, men oppgaven skriver Ce.)';
+
+q('V2008 · Oppgave 14','nordlys','Hva er årsak til nordlys?',['Månelys skinner på skyer.','Ladde partikler fra sola kommer inn i jordas magnetfelt.','Solen står under horisonten om vinteren.','Magnetiske partikler som produseres på Nordpolen, reagerer med luft.','Lystgass (NO₂) er for det meste produsert i nordlige områder.'],1,E.nl);
+q('V2008 · Oppgave 15','halv','En nedbrutt ¹³⁷Ce- (cesium 137) kilde har strålingsaktivitet tilsvarende 1 000 Bq. Hvis halveringstiden for ¹³⁷Ce er 30 år, hvilken strålingsaktivitet hadde kilden for 90 år siden?',['500 Bq','1 000 Bq','2 000 Bq','4 000 Bq','8 000 Bq'],4,E.hl+' 90 år ÷ 30 år = 3 halveringstider.'+CS,{a:1000,n:3,dir:'back'});
+q('V2008 · Oppgave 16','drivhus','Hvilket alternativ beskriver drivhuseffekten?',['Drivhusproduksjon av snittblomster er energikrevende.','CO₂ i atmosfæren hindrer utslipp av varmestråling fra jorda.','Hydrogengass er betraktet som energibærende.','Stråling fra radioaktive kilder brukes i kjernekraft.','Diesel er like forurensende som bensin.'],1,E.dh);
+q('V2008 · Oppgave 17','kjerne','Hva er regnet som hovedkilden for bakgrunnsstrålingen i Norge?',['radon','solstråler','røntgenstråler','kjernekraft','matvarer'],0,E.rad);
+q('V2008 · Oppgave 18','kjerne','I USA har det vært foreslått å gi ut piller av kalium-iodid til folk som bor i nærheten av kjernekraftverk. Hensikten skal være at',['en kjernekraftulykke kan føre til dødsfall','en kjernekraftulykke kan føre til saltubalanse i mennesker','iodid-ioner kan erstatte radioaktive strontium-ioner i kroppens organer','kalium-ioner er nødvendige for nervecellefunksjonen','kalium-iodid kan stoppe betastråling'],2,'Ideen med jodtabletter er at kroppen fylles opp med stabile iodid-ioner, slik at den tar opp mindre radioaktivt stoff fra et utslipp. C er den som kommer nærmest. Ordet «strontium» er egentlig upresist (det er radioaktivt jod som er hovedproblemet), men ingen av de andre svarene beskriver hensikten. Kalium-iodid stopper verken betastråling eller dødsfall.');
+q('V2008 · Oppgave 19','ion','Ioniserende stråler kjennetegnes ved at de',['er atomer i stor hastighet','får elektroner til å løsne fra atomer','er radioaktive stoffer','lyser i lufttomt rom','oppstår ved vulkanutbrudd'],1,E.ion);
+q('H2008 · Oppgave 18','ion','Ioniserende stråler kjennetegnes ved at',['de er molekyler i stor hastighet','de er radioaktive stoffer','de får elektroner til å løsne fra atomer','de lyser i lufttomt rom','de oppstår ved vulkanutbrudd'],2,E.ion);
+q('H2008 · Oppgave 19','nordlys','Nordlys oppstår når',['ladde partikler fra sola kommer inn i jordas magnetfelt','månelys skinner på skyer','sola står under horisonten om vinteren','magnetiske partikler som blir produsert på Nordpolen, reagerer med luft','lystgass (N₂O) blir produsert i nordlige områder'],0,E.nl);
+q('H2008 · Oppgave 20','drivhus','Drivhuseffekten oppstår på grunn av',['stråling fra radioaktive kilder som blir brukt i kjernekraftverk','varme fra hydrogengass som blir brent','CO₂ og vanndamp som hindrer varmestråling fra jorda','økende forbruk av biodiesel','drivhusproduksjon av grønnsaker og blomster'],2,E.dh);
+q('H2008 · Oppgave 21','halv','Halveringstiden til radium 226-isotopen (Ra-226) er 1620 år. I et arkeologisk funn som er ca. 3 240 år gammelt, er det målt en strålingsaktivitet for Ra-226 på 500 Bq (Becquerel). Hvor stor var strålingsaktiviteten for 3240 år siden?',['250 Bq','1000 Bq','2000 Bq','3240 Bq','4000 Bq'],2,E.hl+' 3 240 år ÷ 1 620 år = 2 halveringstider.',{a:500,n:2,dir:'back'});
+q('V2009 · Oppgave 4','kjerne','Den viktigste kilden for bakgrunnsstrålingen i Norge er',['uran','plutonium','cesium','radon','thorium'],3,E.rad);
+q('V2009 · Oppgave 5','bolge','Når du øker lydstyrken på radioen, skjer følgende:',['Lydens hastighet (m/sek) øker.','Lydens bølgelengde øker.','Lydfrekvensen (Hz) øker.','Desibelnivået (dB) øker.','Lydens bølgelengde blir kortere.'],3,E.db);
+q('V2009 · Oppgave 12','drivhus','Ved økt mengde CO₂ i atmosfæren vil vi få',['temperaturøkning','sterkere radioaktiv stråling på jorden','mer ozon i atmosfæren','fare for hull i ozonlaget','økt fare for hudkreft'],0,'CO₂ er en drivhusgass. Mer CO₂ gir sterkere drivhuseffekt og dermed høyere temperatur. Ozonhull og hudkreft henger sammen med ozonlaget og UV, ikke med CO₂.');
+q('V2009 · Oppgave 13','nordlys','Hvordan kan man forklare nordlys?',['Månelys skinner på skyer med refleksjon mot jorda.','Solen står under horisonten om vinteren.','Magnetiske partikler som produseres på Nordpolen, reagerer med luft.','Lystgass (N₂O) er produsert mest i nordlige områder.','Ladde partikler fra sola kommer inn i jordas magnetfelt.'],4,E.nl);
+q('V2009 · Oppgave 20','bolge','Lyd er',['elektromagnetiske bølger','bevegelse i luft','elektrisitet','fotoner','radioaktivitet'],1,E.lyd);
+q('V2009 · Oppgave 30','kjerne','Betastråler kan beskrives som',['røntgenstråler','synlig lys','UV-lys','stråling av elektroner fra atomkjerner','stråling av heliumkjerner'],3,'Betastråling er elektroner som sendes ut fra atomkjerner. Stråling av heliumkjerner er alfastråling. Røntgen, synlig lys og UV er elektromagnetisk stråling.');
+q('H2009 · Oppgave 15','nordlys','Hva er nordlys?',['Lys fra månen som skinner på skyene.','Magnetiske partikler fra Nordpolen som reagerer med lufta.','Lys fra atomer i atmosfæren etter kollisjon med ladde partikler fra sola.','Lys fra sola som står under horisonten om vinteren.','Lys som sendes ut fra ozonlaget ved polene.'],2,E.nl);
+q('H2009 · Oppgave 16','drivhus','Hvilket av følgende utsagn er riktig om drivhuseffekten?',['Drivhusproduksjon av snittblomster er energikrevende.','Vannkraft kan brukes til å produsere varme.','Metan i atmosfæren hindrer utslipp av varmestråling fra jorda.','Hydrogengass er betraktet som energibærende.','Stråling fra radioaktive kilder brukes i kjernekraft.'],2,'Metan er en drivhusgass som holder tilbake varmestråling fra jorda. Flere av de andre utsagnene kan stemme i seg selv, men de handler ikke om drivhuseffekten.');
+q('H2009 · Oppgave 17','halv','Halveringstiden til isotopen karbon-14 (C-14) er 5730 år. I et mammutfunn som er ca. 17 000 år gammelt, er det målt en strålingsaktivitet for C-14 på 500 Bq (becquerel). Hvilket av følgende alternativer er nærmest strålingsaktiviteten for ca. 17 000 år siden?',['250 Bq','1000 Bq','1500 Bq','2000 Bq','4000 Bq'],4,E.hl+' 17 000 år ÷ 5 730 år ≈ 3 halveringstider.',{a:500,n:3,dir:'back'});
+q('H2009 · Oppgave 18','ion','Ioniserende stråler kjennetegnes av at',['de spalter bordsalt, NaCl, i ioner','de får elektroner til å løsne fra atomer','de er radioaktive stoffer','de lyser i lufttomt rom','de oppstår ved vulkanutbrudd'],1,E.ion);
+q('H2009 · Oppgave 19','uv','Ozonlaget beskytter først og fremst mot',['radiostråler','alfastråler','mikrobølger','infrarøde stråler','UV-stråler'],4,E.oz);
+q('V2010 · Oppgave 5','kjerne','Den viktigste kilden for bakgrunnsstrålingen i Norge er',['radon','uran','plutonium','cesium','thorium'],0,E.rad);
+q('V2010 · Oppgave 6','bolge','Når du øker lydstyrken på radioen, skjer følgende:',['Lydens hastighet (m/sek) øker','Lydens bølgelengde øker','Desibelnivået (dB) øker','Lydfrekvensen (Hz) øker','Lydens bølgelengde blir kortere'],2,E.db);
+q('V2010 · Oppgave 13','nordlys','Nordlys er',['månelys som skinner på skyer som reflekteres mot jorda','ladde partikler fra sola som kommer inn i jordas magnetfelt','at solen står under horisonten om vinteren','radioaktiv forurensing fra Kolahalvøya','lys fra metan som er produsert i nordlige områder'],1,E.nl);
+q('V2010 · Oppgave 20','bolge','Lyd er',['elektromagnetiske bølger','fotoner','elektrisitet','bevegelser i luft','radioaktivitet'],3,E.lyd);
+q('V2010 · Oppgave 29','bolge','Hva brukes som måleenhet for frekvens?',['hertz','joule','nanometer','desibel','becquerel'],0,'Frekvens er antall svingninger per sekund og måles i hertz (Hz). Joule måler energi, nanometer måler lengde (bølgelengde), desibel måler lydstyrke og becquerel måler radioaktiv aktivitet.');
+q('V2010 · Oppgave 30','kjerne','Når radon-222 (²²²Rn har atomnr. 86) sender ut en alfastråle, blir atomnummeret endret ved at det',['minskes med én','minskes med to','minskes med fire','økes med én','økes med to'],1,E.alfa+' Massetallet minker med 4.');
+q('H2010 · Oppgave 5','ion','Hvilken av følgende er et eksempel på bruk av ioniserende stråling i medisin?',['røntgenundersøkelse','magnetisk resonans (MR)','ultralyd','DNA-analyse','narkose'],0,E.med);
+q('H2010 · Oppgave 6','drivhus','Økningen av drivhuseffekten de senere årene skyldes at',['sola blir varmere','vulkanaktiviteten på jorda har økt','ozonlaget er redusert','skydekket har blitt mindre','mer CO₂ er tilført atmosfæren'],4,E.dhOk);
+q('H2010 · Oppgave 13','nordlys','Nordlys',['oppstår ved tordenvær','oppstår pga at solen står under horisonten om vinteren','skjer når ladde partikler fra sola kommer inn i jordas magnetfelt','skyldes radioaktiv forurensing fra Kolahalvøya','skyldes lys fra metan som utskilles fra tundraen i nordlige områder pga global oppvarming'],2,E.nl);
+q('H2010 · Oppgave 29','spekter','Et linjespekter kan brukes til å',['se hvilke farger lyset består av','beregne avstanden til en meteor','bestemme hvilke grunnstoffer som finnes i en stjerne','bestemme bølgelengden til sollyset','finne sorte hull i verdensrommet'],2,E.lin+' Alternativ A er et vanlig fargespekter, ikke et linjespekter.');
+q('H2010 · Oppgave 30','kjerne','Når radon-222 (²²²Rn har atomnr. 86) sender ut en alfastråle, blir atomnummeret endret ved at det',['minskes med én','minskes med to','minskes med fire','økes med én','økes med to'],1,E.alfa+' Massetallet minker med 4.');
+q('V2011 · Oppgave 3','drivhus','Økningen av drivhuseffekten de siste årene skyldes at',['sola blir varmere','vulkanaktiviteten på jorda har økt','ozonlaget er redusert','skydekket har blitt mindre','mer CO₂ er tilført atmosfæren'],4,E.dhOk);
+q('V2011 · Oppgave 9','ion','Hvilken av disse er et eksempel på bruk av ioniserende stråling i medisin?',['gammabestråling i kreftbehandling','magnetisk resonans (MR) for beinundersøkelse','ultralydundersøkelse av hjertefunksjon','DNA-analyse i farskapssaker','narkose under kirurgi'],0,E.med);
+q('V2011 · Oppgave 24','spekter','Et linjespekter (emisjonsspekter som viser bestemte spektrallinjer) kan brukes til å',['se hvilke farger lyset består av','beregne avstanden til en meteor','bestemme hvilke grunnstoffer som finnes i en stjerne','bestemme bølgelengden til sollyset','finne sorte hull i verdensrommet'],2,E.lin);
+q('V2011 · Oppgave 25','uv','UV-stråler er farlig for livet på jorda, hovedsakelig fordi de kan',['øke forsuringen av havvann','ødelegge DNA og forårsake kreft','øke havtemperaturen','øke kroppstemperaturen','føre til at isen smelter ved polene'],1,E.uvf);
+q('V2011 · Oppgave 28','ion','Ioniserende stråler kjennetegnes ved at',['atomene har stor hastighet','de får elektroner til å løsne fra atomer','stoffene er radioaktive','de lyser i lufttomt rom','de oppstår ved vulkanutbrudd'],1,E.ion);
+q('H2011 · Oppgave 13','halv','En nedbrutt ¹³⁷Ce (cesium 137)-kilde i området rundt Fukushima kjernekraftverk i Japan har strålingsaktivitet tilsvarende 1000 Bq. Hvis halveringstiden for ¹³⁷Ce er 30 år, hvilken strålingsaktivitet vil kilden ha om 90 år?',['500 Bq','400 Bq','250 Bq','125 Bq','50 Bq'],3,'Her skal vi framover i tid, så aktiviteten halveres for hver halveringstid. 90 år ÷ 30 år = 3 halveringstider.'+CS,{a:1000,n:3,dir:'fwd'});
+q('H2011 · Oppgave 14','nordlys','Nordlys oppstår',['når det lyner ved tordenvær','fordi solen står under horisonten om vinteren','når ladde partikler fra sola kommer inn i jordas magnetfelt','på grunn av radioaktiv forurensing fra Kolahalvøya','når det kommer lys fra metan som utskilles fra tundraen i nordlige områder'],2,E.nl);
+q('H2011 · Oppgave 15','drivhus','Hvilket av følgende utsagn beskriver drivhuseffekt?',['drivhusproduksjon av snittblomster øker lufttemperaturen','CO₂ i atmosfæren hindrer utslipp av varmestråling fra jorda','CO₂ blir produsert under fotosyntesen i planter','økt temperatur vil føre til utrydding av truede tropiske arter','vedfyring forårsaker partikkelforurensning i storbyer'],1,E.dh);
+q('H2011 · Oppgave 23','spekter','Et linjespekter (absorpsjonsspekter) kan brukes til å',['måle styrken til radioaktive stråler','beregne avstanden til sola','bestemme hvilke grunnstoffer som finnes i en stjerne','beregne tykkelsen på ozon-laget','finne svarte hull i verdensrommet'],2,E.lin);
+q('H2011 · Oppgave 24','kjerne','Når radon-222, ²²²Rn, som har atomnummer 86, sender ut en alfapartikkel blir atomnummeret endret ved at det',['minskes med én','minskes med to','minskes med fire','økes med én','økes med to'],1,E.alfa+' Massetallet minker med 4.');
+q('H2011 · Oppgave 30','ion','Hvilken av følgende er et eksempel på bruk av ioniserende stråling i medisin?',['gammabestråling i kreftbehandling','magnetisk resonans (MR) for beinundersøkelse','ultralydundersøkelse av hjertefunksjon','DNA-analyse for farskapsanalyse','narkose under kirurgi'],0,E.med);
+q('V2012 · Oppgave 2','halv','En ²³⁵U-kilde har strålingsaktivitet tilsvarende 1000 Bq. Hvilken strålingsaktivitet hadde kilden for 104 000 000 år siden, hvis halveringstiden for ²³⁵U er 104 000 000 år?',['250 Bq','500 Bq','2000 Bq','4000 Bq','8000 Bq'],2,E.hl+' Det har gått nøyaktig 1 halveringstid.',{a:1000,n:1,dir:'back'});
+q('V2012 · Oppgave 4','bolge','I vakuum har alle elektromagnetiske (EM) bølger samme',['frekvens','hastighet','dB-styrke','bølgelengde','bølgehøyde'],1,E.em);
+q('V2012 · Oppgave 18','ion','Ioniserende stråler kjennetegnes av at de',['får elektroner til å løsne fra atomer','spalter bordsalt, NaCl, i ioner','er radioaktive stoffer','lyser i lufttomt rom','oppstår ved vulkanutbrudd'],0,E.ion);
+q('V2012 · Oppgave 25','uv','Hvilken av følgende stoppes mest effektivt av ozonlaget?',['grønt lys','blått lys','radiobølger','infrarøde stråler','ultrafiolette stråler'],4,E.oz);
+q('V2012 · Oppgave 28','spekter','Ved hjelp av absorpsjonsspektre fra en stjerne kan vi',['bestemme hvilke grunnstoffer den har','bestemme temperaturen på overflaten','finne ut hvor stor stjernen er','oppdage biologisk aktivitet','bestemme hvor gammel den er'],0,E.lin);
+q('H2012 · Oppgave 2','halv','Halveringstiden for ²³⁵U er 700 000 000 år. Strålingsaktiviteten til en ²³⁵U-kilde er 500 Bq. Hvor stor var strålingsaktiviteten til kilden for 700 000 000 år siden?',['250 Bq','500 Bq','1000 Bq','2000 Bq','4000 Bq'],2,E.hl+' Det har gått nøyaktig 1 halveringstid.',{a:500,n:1,dir:'back'});
+q('H2012 · Oppgave 6','nordlys','Hvilket av disse alternativene har med nordlys å gjøre?',['Luftforurensing fra biler.','Månelys skinner på skyer i nordlige områder.','Sola står rett under horisonten om vinteren.','Radioaktive partikler reagerer med luft.','Ladde partikler fra sola kommer inn i jordas magnetfelt'],4,E.nl);
+q('H2012 · Oppgave 21','uv','For livet på jorda er ozonlaget viktig fordi det reduserer innstrålingen av',['radiobølger','infrarøde stråler','grønt lys','blått lys','ultrafiolette stråler'],4,E.oz);
+q('H2012 · Oppgave 23','bolge','Hvilken type stråling har størst bølgelengde?',['rødt lys','blått lys','ultrafiolette stråler','røntgenstråler','radiobølger'],4,'Fra lang til kort bølgelengde: radiobølger, mikrobølger, infrarødt, synlig lys (rødt til blått), UV, røntgen, gamma. Radiobølger har lengst bølgelengde.');
+q('H2012 · Oppgave 28','kjerne','Når karbon-14 (¹⁴C) spaltes, sendes det ut en beta-partikkel. Da vil atomnummeret',['øke med 1','øke med 2','minke med 1','minke med 2','være uforandret'],0,E.beta);
+q('V2013 · Oppgave 4','uv','Ozonlaget er viktig for å hindre innstrålingen av',['radiobølger','infrarøde stråler','rødt lys','blått lys','ultrafiolette stråler'],4,E.oz);
+q('V2013 · Oppgave 8','bolge','Hva har størst bølgelengde?',['grønt lys','gult lys','oransje lys','rødt lys','blått lys'],3,'I synlig lys har rødt lys lengst bølgelengde (ca. 700 nm) og fiolett/blått kortest (ca. 400–450 nm).');
+q('V2013 · Oppgave 13','halv','Halveringstiden for uran-235, ²³⁵U, er 700 000 000 år. Strålingsaktiviteten til en ²³⁵U-kilde er 500 Bq. Hvor stor var strålingsaktiviteten til kilden for 1 400 000 000 år siden?',['250 Bq','500 Bq','1000 Bq','2000 Bq','4000 Bq'],3,E.hl+' 1 400 000 000 ÷ 700 000 000 = 2 halveringstider.',{a:500,n:2,dir:'back'});
+q('V2013 · Oppgave 14','nordlys','Hva er det som forårsaker nordlys?',['gammastråler','elektromagnetiske stråler','laserstråler','radioaktive partikler reagerer med luft','ladde partikler fra sola kommer inn i jordas magnetfelt'],4,E.nl);
+q('V2013 · Oppgave 15','kjerne','Når karbon-14, ¹⁴C, spaltes, sendes det ut en betapartikkel. Da vil atomnummeret',['øke med 1','øke med 2','minke med 1','minke med 2','være uforandret'],0,E.beta);
+q('V2013 · Oppgave 16','ion','Ioniserende stråler kjennetegnes av at',['de får elektroner til å løsne fra atomer','de spalter vann til gassene O₂ og H₂','de spalter NaCl til ionene Na⁺ og Cl⁻','de er radioaktive stoffer','de oppstår ved vulkanutbrudd'],0,E.ion);
+q('V2013 · Oppgave 17','spekter','Ved hjelp av absorpsjonsspektre fra en stjerne kan vi',['bestemme hvilke grunnstoffer den har i sin atmosfære','bestemme hvor gammel den er','bestemme temperaturen på overflaten','bestemme avstanden til stjernen','finne ut hvor stor stjernen er'],0,E.lin);
+q('V2013 · Oppgave 18','bolge','I vakuum har alle elektromagnetiske (EM) bølger samme',['frekvens','fart','dB-styrke','bølgelengde','bølgehøyde'],1,E.em);
+q('V2013 · Oppgave 19','ion','Eksempel på bruk av ioniserende stråling i medisin er',['gammabestråling i kreftbehandling','magnetisk resonans (MR) for beinundersøkelse','ultralydundersøkelse av hjertefunksjon','DNA-analyse i farskapssaker','narkose under kirurgi'],0,E.med);
+q('V2013 · Oppgave 20','uv','UV-stråler er farlige for livet på jorda, hovedsakelig fordi de kan',['øke forsuringen av havvann','ødelegge DNA og forårsake kreft','øke havtemperaturen','øke kroppstemperaturen','føre til at isen smelter ved polene'],1,E.uvf);
+q('V2013 · Oppgave 21','bolge','En bølge svinger opp og ned 15 ganger på 10 sekunder. Hva er frekvensen i Hz?',['0,67','1,5','10','15','150'],1,'Frekvens = antall svingninger ÷ tid = 15 ÷ 10 s = 1,5 Hz.');
+q('V2013 · Oppgave 27','drivhus','Drivhuseffekten kan forklares ved at',['molekyler i atmosfæren tar opp energi fra langbølgede varmestråler fra jorda','molekyler i atmosfæren tar opp energi fra kortbølgede stråler fra sola','ozonlaget hindrer varmeutstrålingen fra jorda','oppvarming fra radioaktivt brensel varmer opp atmosfæren','plantene tar opp CO₂ ved fotosyntesen'],0,E.dh);
+q('H2013 · Oppgave 14','halv','Halveringstiden til thorium-231 (Th-231) er 25,5 timer. En Th-231-kilde har i dag en aktivitet tilsvarende 5000 Bq (Becquerel). Hvor stor var aktiviteten for ca. 100 timer siden?',['5 000 Bq','10 000 Bq','15 000 Bq','40 000 Bq','80 000 Bq'],4,E.hl+' 100 timer ÷ 25,5 timer ≈ 4 halveringstider.',{a:5000,n:4,dir:'back',unit:'timer'});
+q('H2013 · Oppgave 15','kjerne','Når radon-222 (Rn-222 har atomnr. 86) sender ut en alfastråle, blir atomnummeret endret ved at det',['minker med én','minker med to','minker med fire','øker med én','øker med to'],1,E.alfa+' Massetallet minker med 4.');
+q('H2013 · Oppgave 16','uv','Ozonlaget beskytter først og fremst mot',['radiobølger','alfastråler','mikrobølger','infrarøde stråler','UV-stråler'],4,E.oz);
+q('H2013 · Oppgave 17','ion','Hvilket alternativ er et eksempel på bruk av ioniserende stråling i medisin?',['røntgenundersøkelse','magnetisk resonans (MR)','ultralyd','DNA-analyse','lysterapi'],0,E.med+' Lysterapi bruker vanlig lys, som ikke er ioniserende.');
+
+var byId={};Q.forEach(function(x){byId[x.id]=x});
+
+/* ---------- Nivåer og merker ---------- */
+var LEVELS=[
+ {n:'Bakgrunnsstråling',x:0},{n:'Radonmåler',x:120},{n:'Nordlysjeger',x:300},{n:'Halveringsmester',x:600},
+ {n:'Ozonvokter',x:1000},{n:'Spektralanalytiker',x:1550},{n:'Strålingsekspert',x:2200},{n:'Eksamensstjerne',x:3000}
+];
+function levelFor(xp){var i=0;for(var k=0;k<LEVELS.length;k++){if(xp>=LEVELS[k].x)i=k}
+  return {i:i,name:LEVELS[i].n,base:LEVELS[i].x,next:LEVELS[i+1]?LEVELS[i+1].x:null,nextName:LEVELS[i+1]?LEVELS[i+1].n:null}}
+
+var BADGES=[
+ {id:'first',n:'Første måling',d:'Fullfør en runde',g:'1',t:function(){return S.rounds>=1}},
+ {id:'s3',n:'Tre på rad',d:'3 riktige på rad',g:'3×',t:function(){return S.bestStreak>=3}},
+ {id:'s10',n:'Ti på rad',d:'10 riktige på rad',g:'10×',t:function(){return S.bestStreak>=10}},
+ {id:'fast',n:'Lynrask',d:'10 fartsbonuser',g:'8s',t:function(){return S.fast>=10}},
+ {id:'perfect',n:'Full pott',d:'Alt riktig i en runde på 10+',g:'100',t:function(){return S.perfect>=1}},
+ {id:'halv',n:'Halveringsmester',d:'Alle halveringstid-oppgaver riktig',g:'½',t:function(){return topicShare('halv')>=1}},
+ {id:'fixer',n:'Feilrydder',d:'Rett opp 10 tidligere feil',g:'fix',t:function(){return S.fixed>=10}},
+ {id:'survive',n:'Overlever',d:'20 riktige i Overlevelse',g:'20',t:function(){return S.bestSurv>=20}},
+ {id:'prove',n:'Prøveklar',d:'80 % i Prøvesimulering',g:'80%',t:function(){return S.bestProve>=80}},
+ {id:'seen',n:'Alt sett',d:'Svar på alle 69 oppgaver',g:'69',t:function(){return Q.every(function(x){var s=S.stats[x.id];return s&&s.c+s.w>0})}},
+ {id:'day3',n:'Tre dager',d:'Spill tre dager på rad',g:'3d',t:function(){return S.dayStreak>=3}},
+ {id:'stars',n:'Stjernehimmel',d:'3 stjerner i alle temaer',g:'★',t:function(){return TOPIC_ORDER.every(function(k){return topicStars(k)>=3})}}
+];
+
+/* ---------- Lagring ---------- */
+var KEY='straalejakten-v1';
+function fresh(){return {xp:0,stats:{},badges:{},rounds:0,perfect:0,fast:0,fixed:0,answered:0,correct:0,bestStreak:0,bestSurv:0,bestProve:0,lastDay:null,dayStreak:0}}
+var S=fresh();
+try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);S=Object.assign(fresh(),p)}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function st(id){return S.stats[id]||(S.stats[id]={c:0,w:0,last:-1,run:0})}
+function topicQs(k){return Q.filter(function(x){return x.t===k})}
+function topicShare(k){var l=topicQs(k);return l.filter(function(x){return st(x.id).run>=1}).length/l.length}
+function topicStars(k){var s=topicShare(k);return s>=1?3:s>=.8?2:s>=.5?1:0}
+function dkey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dailyTouch(){var now=new Date(),t=dkey(now);if(S.lastDay===t)return;var y=new Date(now);y.setDate(y.getDate()-1);
+  S.dayStreak=S.lastDay===dkey(y)?S.dayStreak+1:1;S.lastDay=t}
+
+/* ---------- Hjelpere ---------- */
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function pick(ids,n){var w=ids.map(function(id){var s=st(id);var m=s.last===0?-.4:(s.c+s.w===0?0:(s.run>=2?1.6:.9));return {id:id,k:Math.random()+m}});
+  w.sort(function(a,b){return a.k-b.k});return shuffle(w.slice(0,n).map(function(x){return x.id}))}
+function fmt(n){return n.toLocaleString('nb-NO')}
+function show(v){['home','play','result'].forEach(function(k){$('#'+k).hidden=k!==v});window.scrollTo(0,0)}
+var toastQ=[],toastBusy=false;
+function toast(msg){toastQ.push(msg);if(!toastBusy)nextToast()}
+function nextToast(){var m=toastQ.shift();var el=$('#toast');if(!m){toastBusy=false;el.hidden=true;return}
+  toastBusy=true;el.textContent=m;el.hidden=false;setTimeout(nextToast,2400)}
+function checkBadges(){BADGES.forEach(function(b){if(!S.badges[b.id]&&b.t()){S.badges[b.id]=Date.now();if(G)G.newBadges.push(b.id);toast('Nytt merke: '+b.n)}})}
+var starSvg=function(on){return '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="'+(on?'star-on':'star-off')+'" d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></svg>'};
+var heartSvg=function(on){return '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="'+(on?'h-on':'h-off')+'" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.9 4.5 6.6 4.5c2 0 3.6 1.1 5.4 3.2 1.8-2.1 3.4-3.2 5.4-3.2 3.7 0 5.7 3.9 4.2 7.3C19.500 16.400 12 21 12 21z"/></svg>'};
+
+/* ---------- Forside ---------- */
+var G=null;
+var HILLS='<svg class="hills" viewBox="0 0 800 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 70V34L70 20L140 40L220 8L300 36L380 24L470 48L560 12L640 38L720 22L800 42V70Z" fill="var(--hill)"/><path d="M0 70V50L90 36L180 54L270 30L350 52L450 38L540 58L640 34L730 52L800 40V70Z" fill="var(--bg)"/></svg>';
+function renderHome(){
+  var L=levelFor(S.xp);var pct=L.next?Math.round((S.xp-L.base)/(L.next-L.base)*100):100;
+  var known=Q.filter(function(x){return st(x.id).run>=1}).length;
+  var acc=S.answered?Math.round(S.correct/S.answered*100)+' %':'–';
+  var mistakes=Q.filter(function(x){return st(x.id).last===0}).length;
+  var h='<div class="band hero"><div class="in"><div class="mark" aria-hidden="true"><i></i><i></i><i></i></div><h1>Strålejakten</h1><p class="lead">Øv til prøven i naturfag: stråling og radioaktivitet. '+Q.length+' eksamensoppgaver fra V2008 til H2013.</p></div>'+HILLS+'</div>';
+  h+='<div class="in main">';
+  h+='<section class="sec"><h2>Din fremgang</h2><div><div class="lvlrow"><span class="lvlname">'+L.name+'</span><span class="lvlno">Nivå '+(L.i+1)+' av '+LEVELS.length+'</span></div><div class="xpbar"><i style="width:'+pct+'%"></i></div><p class="sub num">'+fmt(S.xp)+' XP'+(L.next?' · '+fmt(L.next-S.xp)+' XP til '+L.nextName:' · høyeste nivå')+'</p></div>'
+   +'<div class="stats"><div class="stat"><b>'+known+' av '+Q.length+'</b><span>oppgaver du kan</span></div><div class="stat"><b>'+acc+'</b><span>riktig totalt</span></div><div class="stat"><b>'+S.dayStreak+'</b><span>'+(S.dayStreak===1?'dag':'dager')+' på rad</span></div></div></section>';
+  h+='<section class="sec"><h2>Velg spill</h2><div>'
+   +'<button class="mode primary" data-act="start" data-mode="runde"><span><b>Hurtigrunde</b><small>10 spørsmål. Du får oftere de du ikke har fått til ennå.</small></span><span class="go">10 spm</span></button>'
+   +'<div class="list">'
+   +'<button class="mode" data-act="start" data-mode="overlev"><span><b>Overlevelse</b><small>3 liv. Hvor mange klarer du før de er brukt opp?</small></span><span class="go">rekord '+S.bestSurv+'</span></button>'
+   +'<button class="mode" data-act="start" data-mode="prove"><span><b>Prøvesimulering</b><small>30 spørsmål. Du ser prosent til slutt.</small></span><span class="go">best '+(S.bestProve?S.bestProve+' %':'–')+'</span></button>'
+   +'<button class="mode" data-act="start" data-mode="feil"'+(mistakes?'':' disabled')+'><span><b>Øv på feil</b><small>'+(mistakes?'Spørsmål du bommet på sist du svarte.':'Ingen feil å øve på ennå.')+'</small></span><span class="go">'+mistakes+' spm</span></button>'
+   +'</div></div></section>';
+  h+='<section class="sec"><h2>Temaer</h2><div class="list">';
+  TOPIC_ORDER.forEach(function(k){var T=TOPICS[k],n=topicQs(k).length,sh=Math.round(topicShare(k)*100),s=topicStars(k);
+    h+='<button class="topic" data-act="start" data-mode="tema" data-topic="'+k+'"><b>'+T.n+'</b><span class="n">'+n+' oppgaver</span><span class="d">'+T.d+'</span><span class="stars" aria-label="'+s+' av 3 stjerner">'+starSvg(s>=1)+starSvg(s>=2)+starSvg(s>=3)+'</span><span class="tbar"><i style="width:'+sh+'%"></i></span></button>'});
+  h+='</div></section>';
+  var got=BADGES.filter(function(b){return S.badges[b.id]}).length;
+  h+='<section class="sec"><h2>Merker · '+got+' av '+BADGES.length+'</h2><div class="badges">';
+  BADGES.forEach(function(b){var on=!!S.badges[b.id];h+='<div class="badge'+(on?'':' locked')+'"><span class="medal">'+b.g+'</span><span class="bt"><b>'+b.n+'</b><small>'+b.d+'</small></span></div>'});
+  h+='</div></section><button class="reset" id="reset" data-act="reset">Nullstill fremgang</button></div>';
+  $('#home').innerHTML=h;
+}
+
+/* ---------- Spill ---------- */
+var tmr=null;
+function startGame(mode,topic){
+  var all=Q.map(function(x){return x.id}),ids;
+  if(mode==='runde')ids=pick(all,10);
+  else if(mode==='tema')ids=shuffle(topicQs(topic).map(function(x){return x.id}));
+  else if(mode==='overlev')ids=shuffle(all);
+  else if(mode==='prove')ids=shuffle(all).slice(0,30);
+  else if(mode==='feil')ids=shuffle(all.filter(function(id){return st(id).last===0})).slice(0,15);
+  if(!ids||!ids.length){toast('Ingen oppgaver å spille ennå');return}
+  G={mode:mode,topic:topic||null,ids:ids,i:0,hearts:3,streak:0,maxStreak:0,xp:0,correct:0,results:[],newBadges:[],lvl0:levelFor(S.xp).i,xp0:S.xp,cur:null};
+  show('play');renderQ();
+}
+function modeName(){return {runde:'Hurtigrunde',overlev:'Overlevelse',prove:'Prøvesimulering',feil:'Øv på feil',tema:TOPICS[G.topic]?TOPICS[G.topic].n:'Tema'}[G.mode]}
+function mult(s){return s>=10?3:s>=5?2:s>=3?1.5:1}
+function renderQ(){
+  var qq=byId[G.ids[G.i]];
+  var wrongs=shuffle([0,1,2,3,4].filter(function(i){return i!==qq.a})).slice(0,2);
+  var order=shuffle([qq.a].concat(wrongs));
+  G.cur={q:qq,order:order,done:false,used:false,removed:[],t0:performance.now()};
+  var total=G.ids.length,pct=Math.round(G.i/total*100);
+  var progTxt=G.mode==='overlev'?('Spørsmål '+(G.i+1)):((G.i+1)+' av '+total);
+  var h='<div class="band slim"><div class="in"><div class="topbar"><button class="x" data-act="home" aria-label="Avslutt og gå til forsiden">✕</button>'
+   +'<div class="prog"><span class="ptxt">'+modeName()+' · '+progTxt+'</span><div class="bar"><i style="width:'+pct+'%"></i></div></div>'
+   +(G.mode==='overlev'?'<div class="hearts" id="hearts" aria-label="Liv igjen">'+hearts()+'</div>':'')+'</div></div></div>';
+  h+='<div class="in main" style="padding-top:20px;gap:16px">';
+  h+='<div class="meta"><span class="chip xp" id="cxp">+'+G.xp+' XP</span><span class="chip'+(G.streak>=3?' hot':'')+'" id="cstr">Rekke '+G.streak+(mult(G.streak)>1?' · ×'+String(mult(G.streak)).replace('.',','):'')+'</span></div>';
+  h+='<div class="timer"><div class="track"><i id="tbar"></i></div><span id="tlab">Fartsbonus +5 XP</span></div>';
+  h+='<div class="card"><div class="src"><span>'+qq.src+'</span><span>'+TOPICS[qq.t].n+'</span></div><p class="qtext">'+qq.text+'</p><div class="opts" id="opts">';
+  order.forEach(function(o,pos){h+='<button class="opt" data-act="ans" data-pos="'+pos+'"><span class="l">'+'ABC'[pos]+')</span><span class="t">'+qq.opts[o]+'</span></button>'});
+  h+='</div><div id="fb" aria-live="polite" style="display:flex;flex-direction:column;gap:14px"></div></div></div>';
+  $('#play').innerHTML=h;startTimer();
+}
+function hearts(){var s='';for(var i=0;i<3;i++)s+=heartSvg(i<G.hearts);return s}
+function startTimer(){stopTimer();var bar=$('#tbar'),lab=$('#tlab');
+  tmr=setInterval(function(){if(!G||!G.cur||G.cur.done)return;var s=(performance.now()-G.cur.t0)/1000;
+    bar.style.width=Math.max(0,(20-s)/20*100)+'%';
+    var bonus=s<=8;bar.classList.toggle('late',!bonus);
+    lab.textContent=bonus?'Fartsbonus +5 XP':'Ingen fartsbonus'},100)}
+function stopTimer(){if(tmr){clearInterval(tmr);tmr=null}}
+
+var PRAISE=['Riktig!','Helt riktig!','Der satt den!','Strålende!'],MISS=['Ikke helt.','Ikke denne gangen.','Nesten. Les forklaringen.'];
+function answer(pos){
+  var c=G.cur;if(!c||c.done||c.removed.indexOf(pos)>-1)return;
+  c.done=true;stopTimer();
+  var qq=c.q,chosen=c.order[pos],ok=chosen===qq.a,secs=(performance.now()-c.t0)/1000;
+  var s=st(qq.id),wasWrong=s.last===0,parts=[],gain=0,lvlBefore=levelFor(S.xp).i;
+  dailyTouch();S.answered++;
+  if(ok){
+    G.streak++;G.correct++;if(G.streak>G.maxStreak)G.maxStreak=G.streak;if(G.streak>S.bestStreak)S.bestStreak=G.streak;
+    s.c++;s.run++;s.last=1;S.correct++;if(wasWrong)S.fixed++;
+    var base=10,fast=secs<=8?5:0;if(fast){S.fast++;parts.push('+5 fart')}
+    var m=mult(G.streak),half=1;
+    gain=Math.round((base+fast)*m*half);
+    parts.unshift('+10 riktig');if(m>1)parts.push('×'+String(m).replace('.',',')+' rekke');
+  }else{
+    G.streak=0;s.w++;s.run=0;s.last=0;gain=2;parts.push('+2 for forsøket');
+    if(G.mode==='overlev')G.hearts--;
+  }
+  G.xp+=gain;S.xp+=gain;
+  G.results.push({q:qq,ok:ok,chosen:qq.opts[chosen]});
+  var lvlAfter=levelFor(S.xp).i;if(lvlAfter>lvlBefore)toast('Nivå opp: '+LEVELS[lvlAfter].n);
+  checkBadges();save();
+  // oppdater visning
+  c.order.forEach(function(o,p){var b=document.querySelector('.opt[data-pos="'+p+'"]');b.disabled=true;
+    if(o===qq.a){b.classList.add('ok');b.querySelector('.l').textContent='✓'}
+    else if(p===pos&&!ok){b.classList.add('no');b.querySelector('.l').textContent='✕'}});
+  $('#cxp').textContent='+'+G.xp+' XP';
+  var cs=$('#cstr');cs.textContent='Rekke '+G.streak+(mult(G.streak)>1?' · ×'+String(mult(G.streak)).replace('.',','):'');cs.classList.toggle('hot',G.streak>=3);
+  var hz=$('#hearts');if(hz)hz.innerHTML=hearts();
+  var ended=(G.mode==='overlev'&&G.hearts<=0)||G.i+1>=G.ids.length;
+  var fb='<div class="fb '+(ok?'good':'bad')+'"><h3>'+(ok?PRAISE[Math.floor(Math.random()*PRAISE.length)]:MISS[Math.floor(Math.random()*MISS.length)])+'</h3>'
+   +'<div class="chips">'+parts.map(function(x){return '<span class="chip xp">'+x+'</span>'}).join('')+'</div>';
+  if(!ok)fb+='<p><b>Riktig svar:</b> '+qq.opts[qq.a]+'</p>';
+  fb+='<p>'+qq.why+'</p>';
+  if(qq.calc)fb+=chain(qq.calc);
+  fb+='</div><button class="next" id="nextbtn" data-act="next">'+(ended?'Se resultat':'Neste spørsmål')+'</button>';
+  $('#fb').innerHTML=fb;
+  var nb=$('#nextbtn');if(nb&&nb.scrollIntoView)nb.scrollIntoView({block:'nearest',behavior:'smooth'});
+  nb.focus({preventScroll:true});
+}
+function chain(c){
+  var vals=[c.a],v=c.a;for(var i=0;i<c.n;i++){v=c.dir==='back'?v*2:v/2;vals.push(v)}
+  var mx=Math.max.apply(null,vals),h='<div class="rows" aria-label="Halveringstrinn">';
+  var ht=c.unit==='timer'?'halveringstid':'halveringstid';
+  vals.forEach(function(x,i){
+    var lab=i===0?(c.dir==='back'?'I dag (oppgitt)':'I dag'):(c.dir==='back'?i+' '+(i>1?'halveringstider':'halveringstid')+' siden':'Om '+i+' '+(i>1?'halveringstider':'halveringstid'));
+    h+='<div class="row'+(i===vals.length-1?' end':'')+'"><span class="rl">'+lab+'</span><span class="rb"><i style="width:'+Math.max(3,x/mx*100)+'%"></i></span><span class="rv">'+fmt(x)+' Bq</span></div>'});
+  return h+'</div><p class="note">'+(c.dir==='back'?'Bakover i tid: aktiviteten dobles for hver halveringstid.':'Framover i tid: aktiviteten halveres for hver halveringstid.')+'</p>';
+}
+function nextQ(){
+  var ended=(G.mode==='overlev'&&G.hearts<=0)||G.i+1>=G.ids.length;
+  if(ended){finish();return}
+  G.i++;renderQ();window.scrollTo(0,0);
+}
+
+/* ---------- Resultat ---------- */
+function finish(){
+  stopTimer();
+  var n=G.results.length,ok=G.results.filter(function(r){return r.ok}).length,pct=n?Math.round(ok/n*100):0;
+  var bonus=0;
+  if(G.mode!=='overlev'&&n>=5){bonus=20;if(ok===n)bonus=50}
+  if(G.mode==='overlev'&&ok>=5)bonus=Math.min(60,ok*2);
+  G.xp+=bonus;S.xp+=bonus;
+  S.rounds++;if(n>=10&&ok===n&&G.mode!=='overlev')S.perfect++;
+  if(G.mode==='overlev'&&ok>S.bestSurv)S.bestSurv=ok;
+  if(G.mode==='prove'&&pct>S.bestProve)S.bestProve=pct;
+  checkBadges();save();
+  var L=levelFor(S.xp),up=L.i>G.lvl0,gained=S.xp-G.xp0,lp=L.next?Math.round((S.xp-L.base)/(L.next-L.base)*100):100;
+  var title,sub;
+  if(G.mode==='overlev'){title=G.hearts<=0?'Strålingsdosen ble for stor':'Du klarte hele løypa';sub=ok+' riktige · rekord '+S.bestSurv}
+  else{title=pct>=90?'Strålende!':pct>=70?'Godt jobbet':pct>=50?'På god vei':'Hver feil lærer deg noe';sub=ok+' av '+n+' riktige'+(G.mode==='prove'?' · '+(pct>=80?'Du er klar for prøven':'Øv litt mer på det du bommet på'):'')}
+  var C=2*Math.PI*40,off=C*(1-pct/100);
+  var h='<div class="band slim"><div class="in" style="padding-block:20px"><p class="eyebrow">'+modeName()+'</p><h1>'+title+'</h1></div></div><div class="in main res">';
+  h+='<div class="card"><div class="score"><svg class="ring" viewBox="0 0 100 100" role="img" aria-label="'+pct+' prosent riktig"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--panel)" stroke-width="10"/><circle cx="50" cy="50" r="40" fill="none" stroke="var(--teal)" stroke-width="10" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 50 50)"/><text x="50" y="56" text-anchor="middle" font-size="22">'+pct+'%</text></svg>'
+   +'<div><p style="font-size:18px;font-weight:700">'+sub+'</p><p class="sub mono">+'+gained+' XP'+(bonus?' (inkl. '+bonus+' i rundebonus)':'')+' · lengste rekke '+G.maxStreak+'</p></div></div>'
+   +'<div><div class="xpbar"><i style="width:'+lp+'%"></i></div><p class="sub mono" style="margin-top:6px">'+L.name+(L.next?' · '+fmt(L.next-S.xp)+' XP til '+L.nextName:' · høyeste nivå')+'</p></div>';
+  if(up)h+='<div class="lvlup">Nivå opp! Du er nå «'+L.name+'»</div>';
+  if(G.newBadges.length){h+='<div class="chips">'+G.newBadges.map(function(id){var b=BADGES.filter(function(x){return x.id===id})[0];return '<span class="chip hot">Merke: '+b.n+'</span>'}).join('')+'</div>'}
+  h+='</div>';
+  var wr=G.results.filter(function(r){return !r.ok});
+  if(wr.length){h+='<h2>Gå gjennom feilene</h2><div class="wrong">'+wr.map(function(r){return '<div class="w"><span class="q">'+r.q.text+'</span><span class="a r">Du svarte: '+r.chosen+'</span><span class="a g">Riktig: '+r.q.opts[r.q.a]+'</span><span class="note">'+r.q.src+'</span></div>'}).join('')+'</div>'}
+  h+='<div class="btns"><button class="p" data-act="again">Spill igjen</button><button data-act="home">Til forsiden</button></div></div>';
+  $('#result').innerHTML=h;show('result');
+}
+
+/* ---------- Hendelser ---------- */
+var resetArmed=false;
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]');if(!t)return;var a=t.dataset.act;
+  if(a==='start')startGame(t.dataset.mode,t.dataset.topic);
+  else if(a==='ans')answer(+t.dataset.pos);
+  else if(a==='next')nextQ();
+  else if(a==='home'){stopTimer();G=null;renderHome();show('home')}
+  else if(a==='again'){startGame(G.mode,G.topic)}
+  else if(a==='reset'){if(!resetArmed){resetArmed=true;t.textContent='Trykk én gang til for å slette alt';setTimeout(function(){resetArmed=false;var r=$('#reset');if(r)r.textContent='Nullstill fremgang'},4000)}
+    else{S=fresh();save();resetArmed=false;renderHome();toast('Fremgangen er nullstilt')}}
+});
+document.addEventListener('keydown',function(e){
+  if($('#play').hidden||!G||!G.cur)return;var k=e.key.toLowerCase();
+  if(!G.cur.done){var idx='abc'.indexOf(k);if(idx<0&&/^[1-3]$/.test(k))idx=+k-1;if(idx>-1&&idx<3)answer(idx)}
+  else if(k==='enter'&&!(document.activeElement&&document.activeElement.id==='nextbtn')){e.preventDefault();nextQ()}
+});
+
+renderHome();show('home');
+})();
+</script>
+
+</body></html>
